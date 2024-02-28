@@ -1,0 +1,43 @@
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
+<html>
+<meta charset="UTF-8">
+<link href="/css/style.css" rel="stylesheet">
+<script src="/js/jquery-1.11.0.min.js" ></script>
+<script src="/js/common.js" ></script>
+
+<script>
+new Chart(document.getElementById("line-chart"), {
+    type: 'line',
+    data: {
+      labels: ['10-06','10-07','10-08','10-09','10-10','10-11'],
+      datasets: [{ 
+          data: [${requestScope.boardMap.boardList[0].now},${requestScope.boardMap.boardList[0].now1},${requestScope.boardMap.boardList[0].now2},${requestScope.boardMap.boardList[0].now3},${requestScope.boardMap.boardList[0].now4},${requestScope.boardMap.boardList[0].now5}],
+          label: "${requestScope.boardMap.boardList[0].subject}",
+          borderColor: "#3e95cd",
+          fill: false
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: '일봉차트'
+      }
+    }
+  });
+</script>
+<body>
+<input type="text" name="now">
+
+<div class="canvas-wrap">
+  <div id="line-chart" width="300" height="100"></div>
+</div>
+
+</body>
+</html>

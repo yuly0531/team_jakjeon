@@ -1,0 +1,139 @@
+<!-- mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm  -->
+<!-- JSP기술의 한 종류인 [Page Directive]를 이용하여 현 JSP페이지 처리 방식 선언 -->
+<!-- mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm  -->
+	<!-- 현재 JSP페이지 실행 후 실행되는 문서는 HTML이고 이 문서안의 데이터는 UTF-8방식으로 인코딩한다 라고 설정함 -->
+	<!-- 현재 이 JSP페이지를 저장할때는 UTF-8 방식으로 인코딩한다. -->
+	<!-- 모든 JSP페이지 상단에 무조건 아래 설정이 들어간다.  -->
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+    
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>로그인</title>
+
+<script src="/js/jquery-1.11.0.min.js"></script>
+<script src="/js/common.js"></script>
+
+<script>
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+	//body태그 안의 모든 내용을 읽어들인 후 init 함수호출
+	//mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+	$(function(){ init(); })
+
+	function init(){
+		
+		$(".loginBtn").bind("click",function(){
+			checkLoginForm();
+		});
+		//--------------------------------------------------
+		//접속한 클라이언트가 가져온 쿠키중에 쿠키명이 "mid" 에 대응하는 쿠키값을 꺼내서
+		//		아이디 입력란이 삽입
+		//접속한 클라이언트가 가져온 쿠키중에 쿠키명이 "pwd" 에 대응하는 쿠키값을 꺼내서
+		//		암호 입력란이 삽입
+		//--------------------------------------------------
+		$("[name='mid']").val("${cookie.mid.value}");
+		$("[name='pwd']").val("${cookie.pwd.value}");
+		
+		
+		
+	}
+	
+	function checkLoginForm(){
+		
+		//입력한 아이디 읽어와서 변수 mid에 저장.
+		//만약 변수 mid에 문자가 아닌 데이터가 있다면 ""로 갱신.
+		var mid = $("[name='mid']").val();
+		if(typeof(mid)!="string"){mid="";}
+		mid = $.trim(mid);
+		
+		//입력한 암호 읽어와서 변수 pwd에 저장.
+		//만약 변수 pwd에 문자가 아닌 데이터가 있다면 ""로 갱신.
+		var pwd = $("[name='pwd']").val();
+		if(typeof(pwd)!="string"){pwd="";}
+		pwd = $.trim(pwd);
+		
+		//만약 아이디가 비어잇으면 경고하고 함수 중단.
+		if(mid==""){
+			alert("아이디가 비었습니다. 입력바람.")
+			return;
+		}
+		
+		//만약 암호가 비어잇으면 경고하고 함수 중단.	
+		if(pwd==""){
+			alert("암호가 비었습니다. 입력바람.")
+			return;
+		}
+		//********************************************************
+		// 개발자가 만든 ajax함수 호출하여
+			// WAS에 /loginProc.do로 접속하여
+			// 아이디 ,암호의 존재 개수를 얻어
+			// 존재 개수가 1이면 
+				//WAS에 /boardList.do로 접속하여 게시판 화면 HTML을 연다.
+			//존재 개수가 0이면
+				//경고창이 뜬다.
+		//********************************************************
+		ajax(
+			//WAS에 접속할때 사용할 URL주소 지정
+			"/loginProc.do"
+			//WAS에 전송할 파라미터 값을 보내는 방법 지정.
+			,"post"
+			// form 태그를 관리하는 JQuery 객체의 메위주
+			,$("[name='loginForm']")
+			//WAS와 통신한 후 WAS의 응답을 성공적으로 받앗을 경우 실행할 익명함수 설정.
+			//익명함수의 매개변수에는 WAS가 보내온  [아이디 암호의 존재개수]  가 들어온다.
+			,function(idCnt){
+				if(idCnt==1){
+					//WAS 에 "/boardList.do" URL 주소로 접속 시도.
+					//location.replace("/boardList.do")
+					alert("로그인 성공!!")
+				}
+				else{
+					alert("로그인 실패...아이디 또는 암호가 틀립니다.")
+				}
+			}
+		
+		)
+	}
+</script>
+
+
+</head>
+<body>
+	<center>
+		<form name="loginForm">
+			<table border="1" cellpadding="5" style="border-collapse: collapse">
+				<caption><b>[로그인]</b></caption>
+				<tr>
+					<th>아이디</th>
+					<th>
+						<!---------------------------------------->
+						<input type="text" name="mid">
+						<!---------------------------------------->
+
+					</th>
+				</tr>
+				<tr>
+					<th>암호</th>
+					<th>
+						<!---------------------------------------->
+						<input type="password" name="pwd">
+						<!---------------------------------------->
+					</th>
+				</tr>
+			</table>
+			<div style="height:5px"></div>
+			<!---------------------------------------->
+			<!-- value="yes"의뜻: 체크되면 yes가 반환된다는 의미. -->
+			<input type="checkbox" value="auto_login" value="yes" class="auto_login">아아디/암호 자동입력
+			<!---------------------------------------->
+			<div style="height:5px"></div>
+			<input type="button" value="로그인" class="loginBtn">
+	
+		</form>
+	</center>
+</body>
+</html>
